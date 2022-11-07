@@ -3,6 +3,7 @@
   "version": "0.0.2",
   "description": "Dead simple JSON-RPC server for Node.js.",
   "main": "src/main.js",
+  "type": "module",
   "scripts": {
     "test": "jest"
   },
@@ -12,10 +13,10 @@
   },
   "keywords": [
     "json-rpc",
-    "json",
+    "jsonrpc",
+    "json rpc",
     "rpc",
-    "rpc",
-    "seps",
+    "sepc",
     "repc"
   ],
   "author": "Davyd Kohut (davyd.kohut@gmail.com)",
@@ -23,5 +24,9 @@
   "bugs": {
     "url": "https://github.com/kohutd/sepc/issues"
   },
-  "homepage": "https://github.com/kohutd/sepc#readme"
+  "homepage": "https://github.com/kohutd/sepc#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "get-parameter-names": "^0.3.0"
+  }
 }
