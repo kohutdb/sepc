@@ -1,0 +1,27 @@
+{
+  "name": "sepc",
+  "version": "0.0.2",
+  "description": "Dead simple JSON-RPC server for Node.js.",
+  "main": "src/main.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kohutd/sepc.git"
+  },
+  "keywords": [
+    "json-rpc",
+    "json",
+    "rpc",
+    "rpc",
+    "seps",
+    "repc"
+  ],
+  "author": "Davyd Kohut (davyd.kohut@gmail.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kohutd/sepc/issues"
+  },
+  "homepage": "https://github.com/kohutd/sepc#readme"
+}

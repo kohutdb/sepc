@@ -1,0 +1,27 @@
+# sepc
+
+Dead simple JSON-RPC server for Node.js.
+
+## Installation
+
+```shell
+npm i sepc
+```
+
+## Usage
+
+```javascript
+import sepc from 'sepc';
+
+const add = (a, b) => a + b;
+const sub = (a, b) => a - b;
+
+sepc({ add, sub }).listen(3000);
+```
+
+```shell
+curl -X POST 'http://localhost:3000' \
+  -d '{ "jsonrpc": "2.0", "method": "add", "params": [2, 2], "id": 1 }'
+
+# { "jsonrpc": "2.0", "result": 4, "id": 1 }
+```
