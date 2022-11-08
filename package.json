@@ -1,6 +1,6 @@
 {
   "name": "sepc",
-  "version": "0.0.5",
+  "version": "1.0.0",
   "description": "Dead simple JSON-RPC server for Node.js.",
   "main": "src/main.js",
   "type": "module",
@@ -28,7 +28,7 @@
   "dependencies": {
     "express": "^4.18.2",
     "get-parameter-names": "^0.3.0",
-    "jepc": "^0.0.3",
+    "jepc": "^1.0.0",
     "ws": "^8.11.0"
   }
 }

@@ -12,6 +12,10 @@ npm i sepc
 
 ## Usage
 
+```javascript
+sepc(methods, options)
+```
+
 HTTP:
 
 ```javascript
@@ -40,3 +44,49 @@ const sub = (a, b) => a - b;
 
 sepc.ws({ add, sub }).listen(3000);
 ```
+
+Errors:
+
+```javascript
+import sepc from 'sepc';
+import { JsonRpcError } from 'jepc';
+
+function divide(a, b) {
+    if (b === 0) {
+        throw new JsonRpcError(-32602, 'Cannot divide by zero');
+    }
+
+    return a / b;
+}
+
+sepc({ divide }).listen(3000);
+```
+
+## Options
+
+### `server`
+
+Server builder function. Must implement method `listen` with identical parameters from api's one.
+
+- type: `function`
+- example: [httpServer](/src/httpServer.js), [wsServer](/src/wsServer.js)
+
+### `api`
+
+Additional parameters for API.
+
+- type: `object`
+
+## API
+
+### `listen`
+
+Start a server.
+
+- type: `function(port, path, callback)`
+
+### `methods`
+
+Available methods.
+
+- type: `Record<string, Method>`
