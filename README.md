@@ -1,8 +1,8 @@
 # sepc
 
-Dead simple JSON-RPC over HTTP/WebSockets server for Node.js. Built with [repc](https://github.com/kohutd/repc)
+Dead simple JSON-RPC over HTTP/WebSockets server for Node.js. Built with [jepc](https://github.com/kohutd/jepc)
 and [express](https://expressjs.com). If you
-need a client, try [jepc](https://github.com/kohutd/repc).
+need a client, try [repc](https://github.com/kohutd/repc).
 
 ## Installation
 
