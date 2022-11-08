@@ -1,6 +1,6 @@
 {
   "name": "sepc",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Dead simple JSON-RPC server for Node.js.",
   "main": "src/main.js",
   "type": "module",
