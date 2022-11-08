@@ -1,6 +1,6 @@
 # sepc
 
-Dead simple JSON-RPC server for Node.js.
+Dead simple JSON-RPC over HTTP/WebSockets server for Node.js.
 
 ## Installation
 
@@ -9,6 +9,8 @@ npm i sepc
 ```
 
 ## Usage
+
+HTTP:
 
 ```javascript
 import sepc from 'sepc';
@@ -24,4 +26,15 @@ curl -X POST 'http://localhost:3000' \
   -d '{ "jsonrpc": "2.0", "method": "add", "params": [2, 2], "id": 1 }'
 
 # { "jsonrpc": "2.0", "result": 4, "id": 1 }
+```
+
+WebSockets:
+
+```javascript
+import sepc from 'sepc';
+
+const add = (a, b) => a + b;
+const sub = (a, b) => a - b;
+
+sepc.ws({ add, sub }).listen(3000);
 ```

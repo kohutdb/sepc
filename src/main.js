@@ -1,5 +1,6 @@
 import getParameterNames from "get-parameter-names";
 import express from "express";
+import { WebSocketServer } from 'ws';
 
 export class JsonRpcError {
     constructor(code, message, data = undefined) {
@@ -147,51 +148,79 @@ function sepc(methods = {}, startFn = null) {
         }
     }
 
+    async function handle(message, send) {
+        let request;
+
+        try {
+            request = JSON.parse(message);
+        } catch (e) {
+            return send(makeError(null, {
+                code: -32700,
+                message: 'Parse error'
+            }));
+        }
+
+        let output;
+
+        if (Array.isArray(request)) {
+            if (!request.length) {
+                return send(makeError(null, {
+                    code: -32600,
+                    message: 'Invalid Request',
+                }));
+            }
+
+            output = (await Promise.all(request.map((input) => call(input))))
+                .filter((v) => !!v);
+
+            if (!output.length) {
+                return send('');
+            }
+        } else {
+            output = await call(request);
+        }
+
+        if (output) {
+            return send(output);
+        } else {
+            return send('');
+        }
+    }
+
     function listen(port = 3000, path = '/', callback = undefined) {
         const app = express();
 
         app.use(express.text({ type: '*/*' }));
 
-        app.post(path, async (request, response) => {
-            let input;
-
-            try {
-                input = JSON.parse(request.body);
-            } catch (e) {
-                return response.send(makeError(null, {
-                    code: -32700,
-                    message: 'Parse error'
-                }));
-            }
-
-            let output;
-
-            if (Array.isArray(input)) {
-                if (!input.length) {
-                    return response.send(makeError(null, {
-                        code: -32600,
-                        message: 'Invalid Request',
-                    }));
+        app.post(path, (request, response) => {
+            handle(request.body, (data) => {
+                if (data) {
+                    response.send(data);
+                } else {
+                    response.send('');
                 }
-
-                output = (await Promise.all(input.map((input) => call(input))))
-                    .filter((v) => !!v);
-
-                if (!output.length) {
-                    return response.send('');
-                }
-            } else {
-                output = await call(input);
-            }
-
-            if (output) {
-                response.send(output);
-            } else {
-                response.send('');
-            }
+            });
         });
 
-        if (startFn) {
+        let wss;
+
+        if (startFn?.asWs) {
+            wss = new WebSocketServer({ noServer: true });
+
+            wss.on('connection', (client) => {
+                client.on('message', (message) => {
+                    handle(message, (data) => {
+                        if (data) {
+                            client.send(JSON.stringify(data));
+                        }
+                    });
+                });
+            });
+
+            startFn = startFn.startFn;
+        }
+
+        if (typeof startFn === "function") {
             return startFn({
                 methods,
                 call,
@@ -199,13 +228,27 @@ function sepc(methods = {}, startFn = null) {
                 port,
                 path,
                 callback,
+                handle,
+                wss,
             });
         }
 
-        return app.listen(port, callback);
+        const server = app.listen(port, callback);
+
+        if (wss) {
+            server.on('upgrade', (request, socket, head) => {
+                wss.handleUpgrade(request, socket, head, socket => {
+                    wss.emit('connection', socket, request);
+                });
+            });
+        }
+
+        return server;
     }
 
     return { listen, call, methods };
 }
+
+sepc.ws = (methods, startFn = null) => sepc(methods, { asWs: true, startFn });
 
 export default sepc;
