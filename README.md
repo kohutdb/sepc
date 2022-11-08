@@ -45,7 +45,7 @@ const sub = (a, b) => a - b;
 sepc.ws({ add, sub }).listen(3000);
 ```
 
-Errors:
+Producing errors:
 
 ```javascript
 import sepc from 'sepc';
@@ -62,6 +62,24 @@ function divide(a, b) {
 sepc({ divide }).listen(3000);
 ```
 
+Handling errors:
+
+```javascript
+import sepc from 'sepc';
+
+const add = () => {
+    throw new Error('Unsupported!');
+}
+
+const errorHandler = (error, context, defaultErrorHandler) => {
+    console.error(error);
+
+    return defaultErrorHandler(error, context);
+};
+
+sepc({ add }, { errorHandler }).listen(3000);
+```
+
 ## Options
 
 ### `server`
@@ -70,6 +88,21 @@ Server builder function. Must implement method `listen` with identical parameter
 
 - type: `function`
 - example: [httpServer](/src/httpServer.js), [wsServer](/src/wsServer.js)
+
+### `errorHandler`
+
+Error handler.
+
+- type: `function`
+- example:
+
+```javascript
+const errorHandler = (error, context, defaultErrorHandler) => {
+    console.log(error);
+
+    return defaultErrorHandler(error, context);
+}
+```
 
 ### `api`
 

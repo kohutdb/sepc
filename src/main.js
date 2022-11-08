@@ -3,7 +3,11 @@ import httpServer from "./httpServer.js";
 import wsServer from "./wsServer.js";
 
 function sepc(methods = {}, options = {}) {
-    const { handle } = jepc(methods);
+    const { handle, setErrorHandler } = jepc(methods);
+
+    if (options.errorHandler) {
+        setErrorHandler(options.errorHandler);
+    }
 
     options.server = options.server || httpServer;
     options.api = options.api || {};
