@@ -76,7 +76,7 @@ function sepc(methods = {}, startFn = null) {
             });
         }
 
-        let { jsonrpc, method, params, id = null } = request;
+        let { jsonrpc, method, params = [], id = null } = request;
 
         // 2.0
         if (jsonrpc !== '2.0') {
@@ -120,8 +120,18 @@ function sepc(methods = {}, startFn = null) {
         try {
             const result = await methods[method](params);
 
-            return makeResult(id, result);
+            const madeResult = makeResult(id, result);
+
+            if (!id) {
+                return '';
+            }
+
+            return madeResult;
         } catch (e) {
+            if (!id) {
+                return '';
+            }
+
             if (e instanceof JsonRpcError) {
                 return makeError(id, {
                     code: e.code,
@@ -157,12 +167,28 @@ function sepc(methods = {}, startFn = null) {
             let output;
 
             if (Array.isArray(input)) {
-                output = await Promise.all(input.map((input) => call(input)));
+                if (!input.length) {
+                    return response.send(makeError(null, {
+                        code: -32600,
+                        message: 'Invalid Request',
+                    }));
+                }
+
+                output = (await Promise.all(input.map((input) => call(input))))
+                    .filter((v) => !!v);
+
+                if (!output.length) {
+                    return response.send('');
+                }
             } else {
                 output = await call(input);
             }
 
-            response.send(output);
+            if (output) {
+                response.send(output);
+            } else {
+                response.send('');
+            }
         });
 
         if (startFn) {
